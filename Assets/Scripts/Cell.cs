@@ -6,9 +6,11 @@ using UnityEngine;
 public class Cell : MonoBehaviour
 {
     [SerializeField, HideInInspector] private List<Cell> _cells;
-    
+    [SerializeField] private bool _endCell;
+
     private Dictionary<CellDirection, Cell> _surroundingCells = new Dictionary<CellDirection, Cell>();
 
+    public bool IsEndCell => _endCell;
     public Vector3 Position => transform.position;
     
     public void AddCell(Cell cell)
@@ -19,11 +21,17 @@ public class Cell : MonoBehaviour
         }
         
         _cells.Add(cell);
-        
-        if(!Application.isPlaying)
+
+        if (!Application.isPlaying)
+        {
             EditorUtility.SetDirty(this);
+        }
+        else
+        {
+            SetCells();
+        }
     }
-    
+
     public bool HasCellOnDirection(CellDirection direction)
     {
         return _surroundingCells.ContainsKey(direction);

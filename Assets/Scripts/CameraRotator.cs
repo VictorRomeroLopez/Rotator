@@ -1,27 +1,63 @@
 using System;
+using Core;
 using UnityEngine;
 using DG.Tweening;
 using MyBox;
 
-public static class EventManager
-{
-    public delegate void Event(CellDirection direction);
-
-    public static Event OnRotationEnded;
-}
-
 public class CameraRotator : MonoBehaviour
 {
+    #region Type Definitions
     
+    #endregion
+
+    #region Events
+
+    #endregion
+
+    #region Constants
+
+    #endregion
+
+    #region Serialized Fields
     
     [SerializeField] private Vector3 _rotation;
     [SerializeField] private float _duration;
-    [SerializeField] private Transform _follow;
+
+    #endregion
+
+    #region Standard Attributes
 
     private RotationState _rotationState = RotationState.Down;
     private Tween _tween;
 
-    
+    #endregion
+
+    #region Properties
+
+    #endregion
+
+    #region API Methods
+
+    #endregion
+
+    #region Unity Lifecycle
+
+    private void OnEnable()
+    {
+        EventManager.OnRotateLeft += RotateLeft;
+        EventManager.OnRotateRight += RotateRight;
+    }
+
+    private void OnDisable()
+    {
+        EventManager.OnRotateLeft -= RotateLeft;
+        EventManager.OnRotateRight -= RotateRight;
+    }
+
+    #endregion
+
+    #region Unity Callback
+
     [ButtonMethod]
     public void RotateLeft()
     {
@@ -30,11 +66,10 @@ public class CameraRotator : MonoBehaviour
             return;
         }
 
-        Debug.Log((RotationState)((int)_rotationState - 1).mod(4));
         _rotationState = (RotationState)Mathf.Abs(((int) _rotationState - 1).mod(4));
         Rotate(_rotation, _duration);
     }
-    
+
     [ButtonMethod]
     public void RotateRight()
     {
@@ -45,38 +80,16 @@ public class CameraRotator : MonoBehaviour
         _rotationState = (RotationState)((int)_rotationState + 1).mod(4);
         Rotate(-_rotation, _duration);
     }
-    
+
+    #endregion
+
+    #region Other Methods
+
     private void Rotate(Vector3 rotation, float duration)
     {
         _tween = transform.DORotate(transform.rotation.eulerAngles + rotation, duration)
             .OnComplete(() => EventManager.OnRotationEnded.Invoke((CellDirection)_rotationState));
     }
 
-    private void OnDrawGizmos()
-    {
-        if (!Application.isPlaying)
-        {
-            return;
-        }
-        
-        Vector3 direction = Vector3.up;
-        switch (_rotationState)
-        {
-            case RotationState.Up:
-                direction = Vector3.up;
-                break;
-            case RotationState.Right:
-                direction = Vector3.right;
-                break;
-            case RotationState.Down:
-                direction = Vector3.down;
-                break;
-            case RotationState.Left:
-                direction = Vector3.left;
-                break;
-        }
-
-        Gizmos.color = Color.blue;
-        Gizmos.DrawRay(_follow.position,direction);
-    }
+    #endregion
 }

@@ -6,6 +6,14 @@ public struct CellPosition
     public readonly float x;
     public readonly float y;
 
+    public Vector2 Vector => new Vector2(x, y);
+    
+    public CellPosition(float x, float y)
+    {
+        this.x = x;
+        this.y = y;
+    }
+    
     public CellPosition(Vector2 initialPosition)
     {
         x = initialPosition.x;
